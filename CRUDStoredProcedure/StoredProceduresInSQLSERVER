@@ -1,0 +1,124 @@
+-- Read All Employees
+
+create proc [dbo].[usp_Get_Employees]
+as
+begin
+	select Id, FirstName, LastName, DateOfBirth,Email, Salary  from dbo.Employees with (nolock)
+end
+
+
+-- Get By ID
+
+create proc [dbo].[usp_Get_EmployeeById]
+(
+	@Id INT
+)
+as
+begin
+	select Id, FirstName, LastName, DateOfBirth,Email, Salary  from dbo.Employees with (nolock) 
+	where Id = @Id
+
+end
+
+-- Insert 
+
+create proc [dbo].[usp_Insert_Employee]
+(
+	@FirstName VARCHAR(50), 
+	@LastName VARCHAR(50) , 
+	@DateOfBirth DATE,
+	@Email NVARCHAR(50), 
+	@Salary FLOAT
+)
+as
+begin
+
+begin try
+
+begin tran
+	insert into dbo.Employees( FirstName, LastName, DateOfBirth,Email, Salary) 
+	values (
+		@FirstName, 
+		@LastName, 
+		@DateOfBirth ,
+		@Email , 
+		@Salary 
+	)
+
+commit tran
+end try 
+begin catch
+			rollback tran
+end catch
+end
+
+
+--Update 
+
+create proc [dbo].[usp_Update_Employee]
+(
+	@Id INT,
+	@FirstName VARCHAR(50), 
+	@LastName VARCHAR(50) , 
+	@DateOfBirth DATE,
+	@Email NVARCHAR(50), 
+	@Salary FLOAT
+)
+as
+begin
+declare @RowCount INT =0
+	begin try
+
+		set @RowCount = (select count(1) from dbo.Employees with (nolock) where Id = @Id)
+
+		if(@RowCount > 0)
+			begin
+				begin tran
+					update dbo.Employees
+						set
+							FirstName =	@FirstName ,
+							LastName = @LastName ,
+							DateOfBirth = @DateOfBirth ,
+							Email = @Email ,
+							Salary = @Salary
+						where Id = @Id
+				commit tran
+			end
+	end try 
+
+	begin catch
+			rollback tran
+	end catch
+
+end
+
+
+-- Delete
+
+
+create proc [dbo].[usp_Delete_Employee]
+(
+	@Id INT
+)
+as
+begin
+declare @RowCount INT = 0
+	begin try
+
+		set @RowCount = (select count(1) from dbo.Employees with (nolock) where Id = @Id)
+
+		if(@RowCount > 0)
+			begin
+				begin tran
+					delete from dbo.Employees
+						where Id = @Id
+				commit tran
+			end
+	end try 
+
+	begin catch
+			rollback tran
+	end catch
+
+end
+
