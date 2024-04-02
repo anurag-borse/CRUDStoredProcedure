@@ -22,7 +22,7 @@ namespace CRUDStoredProcedure.DAL
 
         public List<Employee> GetAll()
         {
-               List<Employee> employeeList = new List<Employee>();
+               List<Employee> employeeList = new List<Employee   >();
             using (_connection = new SqlConnection(GetConnectionString()))
             {
                 _command = _connection.CreateCommand();
